@@ -89,8 +89,9 @@ int main() {
             window.draw(bckgrnd);
             window.draw(jogar->get_spr());
         } else {
-            for (auto i = 0; i < 5; ++i)
-                window.draw(botoes[i]->get_spr());
+			if (!derrota)
+				for (auto i = 0; i < 5; ++i)
+					window.draw(botoes[i]->get_spr());
         }
 
         window.display();
