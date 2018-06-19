@@ -40,6 +40,9 @@
 
 #define FUNDO_JOGO RSC_DIR "Fundo" IMG_EXTENSION
 
+#define BOTAO_GAMEOVER RSC_DIR "GameOver" IMG_EXTENSION
+#define GAMEOVER_AUDIO_FILE RSC_DIR "GameOver" AUDIO_EXTENSION
+
 #define TEMPO_INICIO 2.0d
 
 Fila* gerar_sequencia(int tamanho);

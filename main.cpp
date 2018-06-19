@@ -3,19 +3,27 @@
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/Event.hpp>
 
-#include <iostream>
+#include <SFML/Audio/Sound.hpp>
+#include <SFML/Audio/SoundBuffer.hpp>
+
 #include <cinttypes>
+
 #include "Util.h"
 
 int main() {
     sf::RenderWindow window(sf::VideoMode(800, 600), "Rupoc Genius");
     sf::Clock timer;
     sf::Event event;
+    sf::SoundBuffer sound_buffer_gameover;
+    sf::Sound sound_gameover;
     int k = 2;
     int64_t uTimeout = 0;
     bool menu = true, esperar = true, click_pendente = false, derrota = false;
 
     auto jogar = new Botao(200, 250, BOTAO_INICIO);
+    auto tentar_novamente = new Botao(0, 0, BOTAO_GAMEOVER);
+    sound_buffer_gameover.loadFromFile(GAMEOVER_AUDIO_FILE);
+    sound_gameover.setBuffer(sound_buffer_gameover);
     
     sf::Texture fundos[2];
     sf::Sprite fundos_spr[2];
@@ -23,8 +31,8 @@ int main() {
     fundos[0].loadFromFile(FUNDO_INICIO);
     fundos[1].loadFromFile(FUNDO_JOGO);
     
-    fundos_spr[0].setTexture(fundos[0]);
-    fundos_spr[1].setTexture(fundos[1]);
+    for (auto i = 0; i < 2; ++i)
+        fundos_spr[i].setTexture(fundos[i]);
 
     Fila *resultado = gerar_sequencia(k);
     Fila *sequencia = resultado->clone();
@@ -45,12 +53,9 @@ int main() {
                 esperar = false;
                 timer.restart();
 
-                std::cout << "Iniciando" << std::endl;
-
                 continue;
             } else if (click_pendente && uTimeout < timer.getElapsedTime().asMicroseconds()) {
                 click_pendente = false;
-                std::cout << "Liberando click" << std::endl;
 
                 for (auto i = 0; i < 5; ++i)
                     botoes[i]->set_clicavel(true);
@@ -62,13 +67,7 @@ int main() {
                 timer.restart();
                 
                 click_pendente = true;
-                std::cout << "Travando click" << std::endl;
-            } else if (derrota) {
-                std::cout << "Derrota!" << std::endl;
-                window.close();
             } else if (resultado->vazia()) {
-                std::cout << "Gerando proxima lista" << std::endl;
-
                 delete resultado;
                 delete sequencia;
                 
@@ -83,11 +82,10 @@ int main() {
             if (event.type == sf::Event::Closed)
                 window.close();
             else if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-                std::cout << "Clicou em (" << event.mouseButton.x << "," << event.mouseButton.y << ")" << std::endl;
                 if (menu) {
                     if (jogar->clicado(event.mouseButton.x, event.mouseButton.y)) {
-                        delete jogar;
                         menu = false;
+                        esperar = true;
                         timer.restart();
                     }
                 } else if (!derrota && !click_pendente && !esperar && !resultado->vazia()) {
@@ -95,8 +93,6 @@ int main() {
 
                     if (x == -1)
                         continue;
-                    
-                    std::cout << "Clicou em " << x << " (esperado: " << resultado->top() << ")" << std::endl;
 
                     botoes[x]->get_snd().play();
                     uTimeout = botoes[x]->toggle();
@@ -104,13 +100,24 @@ int main() {
                     
                     click_pendente = true;
 
-                    if (resultado->pop() != x) {
+                    if (resultado->pop() != x)
                         derrota = true;
-                        for (auto i = 0; i < 5; ++i)
-                            delete botoes[i];
-                    }
+                } else if (derrota) {
+                    menu = true;
+                    derrota = false;
+                    click_pendente = false;
+
+                    for (auto i = 0; i < 5; ++i)
+                        botoes[i]->set_clicavel(true);
+
+                    delete resultado;
+                    delete sequencia;
+
+                    k = 2;
+                    
+                    resultado = gerar_sequencia(k);
+                    sequencia = resultado->clone();
                 }
-                
             }
         }
 
@@ -124,6 +131,9 @@ int main() {
 			
             for (auto i = 0; i < 5; ++i)
 				window.draw(botoes[i]->get_spr());
+        } else if (derrota) {
+            window.draw(tentar_novamente->get_spr());
+            sound_gameover.play();
         }
 
         window.display();
@@ -134,6 +144,7 @@ int main() {
     delete resultado;
     delete sequencia;
     delete jogar;
+    delete tentar_novamente;
 
     return 0;
 }
