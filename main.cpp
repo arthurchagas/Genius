@@ -78,6 +78,7 @@ int main() {
                     if (x == -1) continue;
 
                     if (resultado->pop() != x) {
+                        sound_gameover.play();
                         derrota = true;
                         continue;
                     }
@@ -86,7 +87,7 @@ int main() {
                     timeout = botoes[x]->toggle();
                     timer.restart();
                     
-                    click_pendente = true
+                    click_pendente = true;
                 } else if (derrota) {
                     menu = true;
                     derrota = false;
@@ -114,7 +115,6 @@ int main() {
 				window.draw(botoes[i]->get_spr());
         } else if (derrota) {
             window.draw(fundos_spr[2]);
-            sound_gameover.play();
         }
 
         window.display();
