@@ -21,17 +21,18 @@ int main() {
     bool menu = true, esperar = true, click_pendente = false, derrota = false;
 
     auto jogar = new Botao(200, 250, BOTAO_INICIO);
-    auto tentar_novamente = new Botao(0, 0, BOTAO_GAMEOVER);
+    
     sound_buffer_gameover.loadFromFile(GAMEOVER_AUDIO_FILE);
     sound_gameover.setBuffer(sound_buffer_gameover);
     
-    sf::Texture fundos[2];
-    sf::Sprite fundos_spr[2];
+    sf::Texture fundos[3];
+    sf::Sprite fundos_spr[3];
 
     fundos[0].loadFromFile(FUNDO_INICIO);
     fundos[1].loadFromFile(FUNDO_JOGO);
+    fundos[2].loadFromFile(BOTAO_GAMEOVER);
     
-    for (auto i = 0; i < 2; ++i)
+    for (auto i = 0; i < 3; ++i)
         fundos_spr[i].setTexture(fundos[i]);
 
     Fila *resultado = gerar_sequencia(k);
@@ -132,7 +133,7 @@ int main() {
             for (auto i = 0; i < 5; ++i)
 				window.draw(botoes[i]->get_spr());
         } else if (derrota) {
-            window.draw(tentar_novamente->get_spr());
+            window.draw(fundos_spr[2]);
             sound_gameover.play();
         }
 
@@ -144,7 +145,6 @@ int main() {
     delete resultado;
     delete sequencia;
     delete jogar;
-    delete tentar_novamente;
 
     return 0;
 }
