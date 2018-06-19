@@ -16,35 +16,22 @@ int main() {
     sf::Event event;
     sf::SoundBuffer sound_buffer_gameover;
     sf::Sound sound_gameover;
-    int k = 2;
-    int64_t uTimeout = 0;
-    bool menu = true, esperar = true, click_pendente = false, derrota = false;
-
-    auto jogar = new Botao(200, 250, BOTAO_INICIO);
-    
-    sound_buffer_gameover.loadFromFile(GAMEOVER_AUDIO_FILE);
-    sound_gameover.setBuffer(sound_buffer_gameover);
-    
     sf::Texture fundos[3];
     sf::Sprite fundos_spr[3];
 
-    fundos[0].loadFromFile(FUNDO_INICIO);
-    fundos[1].loadFromFile(FUNDO_JOGO);
-    fundos[2].loadFromFile(BOTAO_GAMEOVER);
+    Fila *resultado = nullptr, *sequencia = nullptr;
+    Botao *botoes[5] = {nullptr}, *jogar = nullptr;
+
+    bool menu = true, esperar = true, click_pendente = false, derrota = false;
+
+    int k = TAMANHO_INICIO;
+    int64_t timeout = 0;
     
-    for (auto i = 0; i < 3; ++i)
-        fundos_spr[i].setTexture(fundos[i]);
+    carregar_sons_gameover(sound_buffer_gameover, sound_gameover);
+    carregar_sprites_background(fundos, fundos_spr);
+    carregar_botoes(jogar, botoes);
 
-    Fila *resultado = gerar_sequencia(k);
-    Fila *sequencia = resultado->clone();
-
-    Botao *botoes[5];
-
-    botoes[ADORE] = new Botao(100, 87, ADORE_FILE, ADORE_SELECTED_FILE, ADORE_AUDIO_FILE);
-    botoes[ALYSSA] = new Botao(100, 350, ALYSSA_FILE, ALYSSA_SELECTED_FILE, ALYSSA_AUDIO_FILE);
-    botoes[DETOX] = new Botao(550, 75, DETOX_FILE, DETOX_SELECTED_FILE, DETOX_AUDIO_FILE);
-    botoes[JINKX] = new Botao(550, 350, JINKX_FILE, JINKX_SELECTED_FILE, JINKX_AUDIO_FILE);
-    botoes[VANJIE] = new Botao(325, 225, VANJIE_FILE, VANJIE_SELECTED_FILE, VANJIE_AUDIO_FILE);
+    gerar_sequencia_e_resultado_esperado(sequencia, resultado, k);
 
     while (window.isOpen()) {
         if (!menu) {
@@ -55,7 +42,7 @@ int main() {
                 timer.restart();
 
                 continue;
-            } else if (click_pendente && uTimeout < timer.getElapsedTime().asMicroseconds()) {
+            } else if (click_pendente && timeout < timer.getElapsedTime().asMicroseconds()) {
                 click_pendente = false;
 
                 for (auto i = 0; i < 5; ++i)
@@ -64,16 +51,12 @@ int main() {
                 continue;
             } else if (!click_pendente && !sequencia->vazia()) {
                 botoes[sequencia->top()]->get_snd().play();
-                uTimeout = botoes[sequencia->pop()]->toggle();
+                timeout = botoes[sequencia->pop()]->toggle();
                 timer.restart();
                 
                 click_pendente = true;
             } else if (resultado->vazia()) {
-                delete resultado;
-                delete sequencia;
-                
-                resultado = gerar_sequencia(++k);
-                sequencia = resultado->clone();
+                gerar_sequencia_e_resultado_esperado(sequencia, resultado, k);
 
                 continue;
             }
@@ -92,17 +75,18 @@ int main() {
                 } else if (!derrota && !click_pendente && !esperar && !resultado->vazia()) {
                     auto x = encontrar_clicado(botoes, event.mouseButton.x, event.mouseButton.y);
 
-                    if (x == -1)
+                    if (x == -1) continue;
+
+                    if (resultado->pop() != x) {
+                        derrota = true;
                         continue;
+                    }
 
                     botoes[x]->get_snd().play();
-                    uTimeout = botoes[x]->toggle();
+                    timeout = botoes[x]->toggle();
                     timer.restart();
                     
-                    click_pendente = true;
-
-                    if (resultado->pop() != x)
-                        derrota = true;
+                    click_pendente = true
                 } else if (derrota) {
                     menu = true;
                     derrota = false;
@@ -111,13 +95,9 @@ int main() {
                     for (auto i = 0; i < 5; ++i)
                         botoes[i]->set_clicavel(true);
 
-                    delete resultado;
-                    delete sequencia;
-
-                    k = 2;
+                    k = TAMANHO_INICIO;
                     
-                    resultado = gerar_sequencia(k);
-                    sequencia = resultado->clone();
+                    gerar_sequencia_e_resultado_esperado(sequencia, resultado, k);
                 }
             }
         }

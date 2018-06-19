@@ -44,8 +44,13 @@
 #define GAMEOVER_AUDIO_FILE RSC_DIR "GameOver" AUDIO_EXTENSION
 
 #define TEMPO_INICIO 2.0d
+#define TAMANHO_INICIO 2
 
 Fila* gerar_sequencia(int tamanho);
 int encontrar_clicado(Botao *botoes[5], int x, int y);
+void carregar_botoes(Botao *&jogar, Botao *botoes[5]);
+void carregar_sprites_background(sf::Texture *fundos, sf::Sprite *fundos_spr);
+void carregar_sons_gameover(sf::SoundBuffer &sound_buffer_gameover, sf::Sound &sound_gameover);
+void gerar_sequencia_e_resultado_esperado(Fila *&sequencia, Fila *&resultado, int &k);
 
 #endif //UTIL_H
