@@ -2,9 +2,10 @@
 #define BOTAO_H
 
 #include <SFML/Graphics/Sprite.hpp>
-#include <SFML/Graphics/Text.hpp>
+#include <SFML/Graphics/Texture.hpp>
 #include <SFML/System/Time.hpp>
-#include <SFML/Audio.hpp>
+#include <SFML/Audio/Sound.hpp>
+#include <SFML/Audio/SoundBuffer.hpp>
 
 #include <cinttypes>
 
@@ -18,6 +19,7 @@ public:
 	sf::Sprite get_spr();
     sf::Sound& get_snd();
 	int64_t toggle();
+	int64_t set_clicavel(bool opt);
 	bool e_clicavel();
 	void timeout();
 

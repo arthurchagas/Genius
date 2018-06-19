@@ -16,29 +16,10 @@ Fila* gerar_sequencia(int tamanho) {
     return resultado;
 }
 
-void travar_todos(Botao *botoes[5]) {
+int encontrar_clicado(Botao *botoes[5], int x, int y) {
     for (auto i = 0; i < 5; ++i)
-        if (botoes[i]->e_clicavel())
-            botoes[i]->timeout();
-}
-
-void liberar_todos(Botao *botoes[5]) {
-    for (auto i = 0; i < 5; ++i)
-        if (botoes[i]->e_clicavel())
-            botoes[i]->timeout();
-        else
-            botoes[i]->toggle();
-}
-
-int encontrar_clicado(Botao *botoes[5], int x, int y, int64_t &uTimeout, sf::Clock &timer, bool &click_pendente) {
-    for (auto i = 0; i < 5; ++i)
-        if (botoes[i]->clicado(x, y)) {
-            botoes[i]->get_snd().play();
-            uTimeout = botoes[i]->toggle();
-            timer.restart();
-            travar_todos(botoes);
-            click_pendente = true;
+        if (botoes[i]->clicado(x, y))
             return i;
-        }
+
     return -1;
 }

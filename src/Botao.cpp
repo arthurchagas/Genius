@@ -40,6 +40,15 @@ int64_t Botao::toggle() {
 	return this->get_snd_timeout();
 }
 
+int64_t Botao::set_clicavel(bool opt) {
+	clicavel = opt;
+
+	if (clicavel)
+		return 0;
+	
+	return this->get_snd_timeout();
+}
+
 void Botao::timeout() {
 	timed_out = !timed_out;
 }

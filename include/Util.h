@@ -35,14 +35,14 @@
 #define JINKX_AUDIO_FILE RSC_DIR "Jinkx" AUDIO_EXTENSION
 #define VANJIE_AUDIO_FILE RSC_DIR "Vanjie" AUDIO_EXTENSION
 
-#define BACKGROUND RSC_DIR "Menu" IMG_EXTENSION
-#define JOGAR RSC_DIR "Jogar" IMG_EXTENSION
+#define FUNDO_INICIO RSC_DIR "Menu" IMG_EXTENSION
+#define BOTAO_INICIO RSC_DIR "Jogar" IMG_EXTENSION
+
+#define FUNDO_JOGO RSC_DIR "Fundo" IMG_EXTENSION
 
 #define TEMPO_INICIO 2.0d
 
 Fila* gerar_sequencia(int tamanho);
-void travar_todos(Botao *botoes[5]);
-void liberar_todos(Botao *botoes[5]);
-int encontrar_clicado(Botao *botoes[5], int x, int y, int64_t &uTimeout, sf::Clock &timer, bool &click_pendente);
+int encontrar_clicado(Botao *botoes[5], int x, int y);
 
 #endif //UTIL_H
