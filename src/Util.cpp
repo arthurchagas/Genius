@@ -54,3 +54,10 @@ void carregar_sons_gameover(sf::SoundBuffer &sound_buffer_gameover, sf::Sound &s
     resultado = gerar_sequencia(k++);
     sequencia = resultado->clone();
  }
+
+ void executar_clique(Botao *&bt, int64_t &timeout, sf::Clock &timer, bool &b) {
+    bt->get_snd().play();
+    timeout = bt->toggle();
+    timer.restart();
+    b = true;
+ }

@@ -1,6 +1,8 @@
 #ifndef UTIL_H
 #define UTIL_H
 
+#include <SFML/System/Clock.hpp>
+
 #include "Fila.h"
 #include "Botao.h"
 
@@ -52,5 +54,6 @@ void carregar_botoes(Botao *&jogar, Botao *botoes[5]);
 void carregar_sprites_background(sf::Texture *fundos, sf::Sprite *fundos_spr);
 void carregar_sons_gameover(sf::SoundBuffer &sound_buffer_gameover, sf::Sound &sound_gameover);
 void gerar_sequencia_e_resultado_esperado(Fila *&sequencia, Fila *&resultado, int &k);
+void executar_clique(Botao *&bt, int64_t &timeout, sf::Clock &timer, bool &b);
 
 #endif //UTIL_H
